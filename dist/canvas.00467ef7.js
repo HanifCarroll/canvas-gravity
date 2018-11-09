@@ -105,12 +105,33 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   // Override the current require with this new one
   return newRequire;
 })({"utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.randomIntFromRange = randomIntFromRange;
+exports.getRandomColor = getRandomColor;
+exports.distance = distance;
+exports.c = exports.canvas = void 0;
+var canvas = document.querySelector("canvas");
+exports.canvas = canvas;
+var c = canvas.getContext("2d");
+exports.c = c;
+
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function randomColor(colors) {
-  return colors[Math.floor(Math.random() * colors.length)];
+function getRandomColor() {
+  var letters = "0123456789ABCDEF".split("");
+  var color = "#";
+
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.round(Math.random() * 15)];
+  }
+
+  return color;
 }
 
 function distance(x1, y1, x2, y2) {
@@ -118,14 +139,13 @@ function distance(x1, y1, x2, y2) {
   var yDist = y2 - y1;
   return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
 }
-
-module.exports = {
-  randomIntFromRange: randomIntFromRange,
-  randomColor: randomColor,
-  distance: distance
-};
-},{}],"canvas.js":[function(require,module,exports) {
+},{}],"Ball.js":[function(require,module,exports) {
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var _utils = require("./utils");
 
@@ -135,27 +155,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var canvas = document.querySelector("canvas");
-var c = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
-var colors = ["#2185C5", "#7ECEFD", "#FFF6E5", "#FF7F66"];
-var gravity = 2;
-var friction = 0.95; // Event Listeners
-
-addEventListener("resize", function () {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-  init();
-});
-addEventListener("click", function () {
-  return init();
-}); // Objects
-
 var Ball =
 /*#__PURE__*/
 function () {
-  function Ball(x, y, dx, dy, radius) {
+  function Ball(x, y, dx, dy, radius, gravity, friction) {
     _classCallCheck(this, Ball);
 
     this.x = x;
@@ -163,29 +166,35 @@ function () {
     this.dx = dx;
     this.dy = dy;
     this.radius = radius;
-    this.color = (0, _utils.randomColor)(colors);
+    this.gravity = gravity;
+    this.friction = friction;
+    this.color = (0, _utils.getRandomColor)();
   }
 
   _createClass(Ball, [{
     key: "draw",
     value: function draw() {
-      c.beginPath();
-      c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-      c.fillStyle = this.color;
-      c.fill();
-      c.closePath();
+      _utils.c.beginPath();
+
+      _utils.c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+
+      _utils.c.fillStyle = this.color;
+
+      _utils.c.fill();
+
+      _utils.c.closePath();
     }
   }, {
     key: "addGravity",
     value: function addGravity() {
-      if (this.y + this.radius + this.dy > canvas.height) {
-        this.dy = -this.dy * friction;
+      if (this.y + this.radius + this.dy > _utils.canvas.height) {
+        this.dy = -this.dy * this.friction;
       } else {
-        this.dy += gravity;
+        this.dy += this.gravity;
       }
 
-      if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius <= 0) {
-        this.dx = -this.dx * friction;
+      if (this.x + this.radius + this.dx > _utils.canvas.width || this.x - this.radius <= 0) {
+        this.dx = -this.dx * this.friction;
       }
 
       this.x += this.dx;
@@ -200,37 +209,66 @@ function () {
   }]);
 
   return Ball;
-}(); // Implementation
+}();
 
+exports.default = Ball;
+},{"./utils":"utils.js"}],"canvas.js":[function(require,module,exports) {
+"use strict";
+
+var _Ball = _interopRequireDefault(require("./Ball"));
+
+var _utils = require("./utils");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_utils.canvas.width = innerWidth;
+_utils.canvas.height = innerHeight;
+var gravity = 2;
+var friction = 0.95;
+var ballSlider = document.getElementById("balls"); // Event Listeners
+
+addEventListener("resize", function () {
+  _utils.canvas.width = innerWidth;
+  _utils.canvas.height = innerHeight;
+  init();
+});
+addEventListener("click", function () {
+  return init();
+});
+ballSlider.addEventListener("input", function () {
+  return init();
+}); // Implementation
 
 var balls;
 
 function init() {
   balls = [];
 
-  for (var i = 0; i < 30; i++) {
+  for (var i = 0; i < ballSlider.valueAsNumber; i++) {
     var radius = (0, _utils.randomIntFromRange)(5, 50);
-    var x = (0, _utils.randomIntFromRange)(radius, canvas.width - radius);
-    var y = (0, _utils.randomIntFromRange)(radius, canvas.height - radius);
+    var x = (0, _utils.randomIntFromRange)(radius, _utils.canvas.width - radius);
+    var y = (0, _utils.randomIntFromRange)(radius, _utils.canvas.height - radius);
     var dx = (0, _utils.randomIntFromRange)(-2, 2);
     var dy = (0, _utils.randomIntFromRange)(-5, 5);
-    balls.push(new Ball(x, y, dx, dy, radius));
+    balls.push(new _Ball.default(x, y, dx, dy, radius, gravity, friction));
   }
 } // Animation Loop
 
 
 function animate() {
   requestAnimationFrame(animate);
-  c.clearRect(0, 0, canvas.width, canvas.height); // c.fillText("HTML CANVAS BOILERPLATE", mouse.x, mouse.y);
 
-  balls.forEach(function (object) {
-    object.update();
+  _utils.c.clearRect(0, 0, _utils.canvas.width, _utils.canvas.height); // c.fillText("HTML CANVAS BOILERPLATE", mouse.x, mouse.y);
+
+
+  balls.forEach(function (ball) {
+    ball.update();
   });
 }
 
 init();
 animate();
-},{"./utils":"utils.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./Ball":"Ball.js","./utils":"utils.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
