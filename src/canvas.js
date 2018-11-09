@@ -4,7 +4,7 @@ import { canvas, c, randomIntFromRange } from "./utils";
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-const gravity = 2;
+const gravitySlider = document.getElementById("gravity");
 const friction = 0.95;
 const ballSlider = document.getElementById("balls");
 
@@ -32,6 +32,7 @@ function init() {
     const y = randomIntFromRange(radius, canvas.height - radius);
     const dx = randomIntFromRange(-2, 2);
     const dy = randomIntFromRange(-5, 5);
+    const gravity = gravitySlider.valueAsNumber;
 
     balls.push(new Ball(x, y, dx, dy, radius, gravity, friction));
   }

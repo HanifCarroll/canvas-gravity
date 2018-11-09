@@ -223,7 +223,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _utils.canvas.width = innerWidth;
 _utils.canvas.height = innerHeight;
-var gravity = 2;
+var gravitySlider = document.getElementById("gravity");
 var friction = 0.95;
 var ballSlider = document.getElementById("balls"); // Event Listeners
 
@@ -250,6 +250,7 @@ function init() {
     var y = (0, _utils.randomIntFromRange)(radius, _utils.canvas.height - radius);
     var dx = (0, _utils.randomIntFromRange)(-2, 2);
     var dy = (0, _utils.randomIntFromRange)(-5, 5);
+    var gravity = gravitySlider.valueAsNumber;
     balls.push(new _Ball.default(x, y, dx, dy, radius, gravity, friction));
   }
 } // Animation Loop
