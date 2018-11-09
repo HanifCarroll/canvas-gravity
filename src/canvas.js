@@ -5,7 +5,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 const gravitySlider = document.getElementById("gravity");
-const friction = 0.95;
+const frictionSlider = document.getElementById("friction");
 const ballSlider = document.getElementById("balls");
 
 // Event Listeners
@@ -33,6 +33,7 @@ function init() {
     const dx = randomIntFromRange(-2, 2);
     const dy = randomIntFromRange(-5, 5);
     const gravity = gravitySlider.valueAsNumber;
+    const friction = frictionSlider.valueAsNumber;
 
     balls.push(new Ball(x, y, dx, dy, radius, gravity, friction));
   }
