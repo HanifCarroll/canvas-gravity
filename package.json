@@ -6,7 +6,6 @@
     "dev": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url '.'"
   },
-  "main": "webpack.config.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
