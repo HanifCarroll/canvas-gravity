@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <title>Canvas Template</title>
-    <style>
-        body {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
+    <link rel="stylesheet" href="/style.e308ff8e.css">
+  <script src="/style.e308ff8e.js"></script></head>
+  <div id="container">
+    <div class="controls">
+      <h3>Settings</h3>
+      <div class="setting">
+        <label for="gravity">Gravity</label>
+        <input type="range" name="gravity" id="gravity" min="0.1" max="2" value="0.95">
+      </div>
+      <div class="setting">
+        <label for="balls"># of Balls</label>
+        <input type="range" name="balls" id="balls" min="1" max="1000">
+      </div>
+    </div>
     <canvas></canvas>
-<script type="text/javascript" src="./js/canvas.bundle.js"></script></body>
+  </div>
+  <body>
+    <script src="/canvas.00467ef7.js"></script>
+  </body>
 </html>
